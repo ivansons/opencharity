@@ -1,0 +1,182 @@
+<?php
+/**
+ * @file
+ * Code for the Panopoly Sponsor Paid feature.
+ */
+
+include_once 'panopoly_sponsor_paid.features.inc';
+
+
+/**
+ * Implements hook_commerce_checkout_page_info().
+ */
+function panopoly_sponsor_paid_commerce_checkout_page_info() {
+  $checkout_pages = array();
+
+  $checkout_pages['panopoly_sponsor_paid_page'] = array(
+    'name' => t('Sponsor page'),
+    'title' => t('Create sponsor page'),
+    'weight' => -10,
+    'status_cart' => FALSE,
+    'buttons' => TRUE,
+  );
+  return $checkout_pages;
+}
+
+/**
+ * Implements hook_commerce_checkout_pane_info().
+ */
+function panopoly_sponsor_paid_commerce_checkout_pane_info() {
+  $checkout_panes = array();
+
+  $checkout_panes['panopoly_sponsor_paid_pane'] = array(
+    'title' => t('Create sponsor form'),
+    'base' => 'panopoly_sponsor_paid_pane',
+    'page' => 'panopoly_sponsor_paid_page',
+    'fieldset' => FALSE,
+  );
+  return $checkout_panes;
+}
+
+function panopoly_sponsor_paid_pane_checkout_form($form, &$form_state, $checkout_pane, $order){
+
+  // Include page handler for node_add()
+  form_load_include($form_state,'inc','node','node.pages');
+  $form = node_add('panopoly_sponsor');
+  //$output = drupal_render($form);
+
+  $form['actions']['submit']['#access'] = FALSE;
+  $form['actions']['preview']['#access'] = FALSE;
+  $form['actions']['draft']['#access'] = FALSE;
+  $form['author']['#access'] = FALSE;
+  $form['options']['#access'] = FALSE;
+  $form['revision_information']['#access'] = FALSE;
+  unset($form['menu']);
+
+  // unset or get an expired form error
+  unset($form['form_token']);
+
+  // unset or the title is not saved
+  unset($form['title']['#value']);
+
+  unset($form['field_sponsorship_level']);
+
+  unset($form['field_order_reference']);
+
+  // unset or the field does not save
+  // unset($form['field_sponsorship_level']['und']['#value']);
+  return $form;
+}
+
+/**
+ * Custom checkout pane submit handler.
+ *
+ * Store the form data to the order object
+ */
+function panopoly_sponsor_paid_pane_checkout_form_submit($form, &$form_state, $checkout_pane, &$order) {
+  $order->data['node'] = $form_state['values'];
+}
+
+/**
+ * Custom checkout pane validate handler.
+ *
+ * do my custom form validation here
+ * TODO
+ */
+function panopoly_sponsor_paid_pane_checkout_form_validate($form, &$form_state, $checkout_pane, $order) {
+  if(FALSE){
+    form_set_error('', t(''));
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Implements hook_commerce_checkout_router().
+ *
+ * Create node on complete checkout page.
+ */
+function panopoly_sponsor_paid_commerce_checkout_router($order, $checkout_page) {
+
+  // get the total items in the cart and the total
+  $wrapper = entity_metadata_wrapper('commerce_order', $order);
+  $line_items = $wrapper->commerce_line_items;
+  $quantity = commerce_line_items_quantity($line_items, commerce_product_line_item_types());
+  $total = commerce_line_items_total($line_items);
+
+  // check if I want to skip the node creation page
+  if ($checkout_page['page_id'] == 'panopoly_sponsor_paid_page'){
+    $skip = array();
+
+    // loop trhough the line items and verify if there is 'paid_sponsorship' product
+    // if there is, I dont want to skip the step
+    foreach (entity_metadata_wrapper('commerce_order', $order)->commerce_line_items as $delta => $line_item_wrapper) {
+      if (in_array($line_item_wrapper->type->value(), commerce_product_line_item_types())) {
+        if ($line_item_wrapper->commerce_product->type->raw() == 'paid_sponsorship') {
+          if($line_item_wrapper->commerce_product->field_sponsorship_level->raw() != '')
+            $skip[] = 'no';
+        }
+      }
+    }
+
+    // skip the node node creation form
+    if(!in_array('no',$skip)){
+
+      $checkout_pages = commerce_checkout_pages();
+      $checkout_pages_keys = array_keys($checkout_pages);
+      $checkout_position = array_search($checkout_page['page_id'], $checkout_pages_keys);
+      if (isset($checkout_pages_keys[$checkout_position + 1])) {
+        $order = commerce_order_status_update($order,'checkout_'.$checkout_page['next_page']);
+        drupal_goto('checkout/'. $order->order_number  .'/' . $checkout_page['next_page']);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_commerce_checkout_complete().
+ *
+ * This is for business logic after the order completes.
+ *
+ * @param object $order
+ *   The current order.
+ */
+function panopoly_sponsor_paid_commerce_checkout_complete($order) {
+
+  if(isset($order->data['node'])){
+
+    $sponsor_levels = array();
+    foreach (entity_metadata_wrapper('commerce_order', $order)->commerce_line_items as $delta => $line_item_wrapper) {
+
+      // check IF:
+      // this line item is a product AND
+      // is a type of 'sponsor_event' AND
+      // the sponsor event field is set
+      if($line_item_wrapper->commerce_product->type->raw() == 'paid_sponsorship'){
+        if($line_item_wrapper->commerce_product->field_sponsorship_level->raw()!=''){
+          $sponsor_levels[] = $line_item_wrapper->commerce_product->field_sponsorship_level->raw();
+        }
+      }
+    }
+
+    // the prevailing sponsor type is the lowest value
+    $sponsor_level = min($sponsor_levels);
+
+    $node = (object) $order->data['node'];
+    // unset field_logo or this gives an error.
+    // @todo: remove this when the image upload is fixed
+    $node->field_logo = array();
+    if(isset($sponsor_level))
+    {
+      $node->field_sponsorship_level[LANGUAGE_NONE][0]['value'] = $sponsor_level;
+    }
+
+    $node->field_order_reference[LANGUAGE_NONE][0]['target_id'] = $order->order_id;
+    $node->uid = $order->uid;
+
+    //set unpublished
+    $node->status = 0;
+    node_save($node);
+    unset($order->data['node']);
+  }
+}

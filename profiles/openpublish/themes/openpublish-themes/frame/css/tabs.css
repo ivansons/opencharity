@@ -1,0 +1,39 @@
+/*
+ * Style page tabs in toolbar drawer
+ */
+
+#toolbar ul.tabs.primary{
+  padding: 5px 0 2px;
+  height: 28px;
+  line-height: 24px;
+  margin: 0 15px 0 0;
+  border: 0;
+  float:right;
+}
+#toolbar ul.tabs.primary li a,
+div#toolbar a#edit-shortcuts {
+  background-color: inherit;
+  border-radius: 5px 5px 5px 5px;
+  margin-right: 5px;
+  padding: 0 5px;
+}
+div#toolbar a#edit-shortcuts {
+  margin-top:5px;
+}
+#toolbar ul.tabs.primary li a:hover,
+div#toolbar a#edit-shortcuts:hover {
+  background: #555;
+  text-decoration:none;
+}
+#toolbar ul.tabs.primary li a.active,
+div#toolbar a#edit-shortcuts.active {
+  background: #000;
+}
+
+/*
+ * Hide page tabs
+ */
+#page div.tabs,
+#page ul.action-links {
+  display:none;
+}

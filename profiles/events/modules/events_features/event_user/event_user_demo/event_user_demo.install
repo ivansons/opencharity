@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * event_user_demo.install
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function event_user_demo_enable() {
+  _panopoly_core_import_demo_content(array('EventUserDemo'));
+}
+
+/**
+ * Implements hook_disable().
+ */
+function event_user_demo_disable() {
+  _panopoly_core_rollback_demo_content(array('EventUserDemo'));
+}

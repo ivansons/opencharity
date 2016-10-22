@@ -1,0 +1,20 @@
+core = "7.x"
+dependencies[] = "features"
+dependencies[] = "taxonomy"
+description = "Provides the ability to place content into sections"
+features[field][] = "node-openpublish_article-field_op_section_term"
+features[field][] = "node-openpublish_blog_post-field_op_section_term"
+features[field][] = "node-openpublish_photo_gallery-field_op_section_term"
+features[field][] = "node-openpublish_video-field_op_section_term"
+features[field][] = "node-section_front-field_op_section_term"
+features[taxonomy][] = "sections"
+name = "OpenPublish Section"
+package = "Features"
+php = "5.2.4"
+
+; Information added by Drupal.org packaging script on 2013-12-13
+version = "7.x-1.0-beta9"
+core = "7.x"
+project = "openpublish"
+datestamp = "1386961705"
+

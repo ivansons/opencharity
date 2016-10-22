@@ -1,0 +1,112 @@
+<?php
+function custom_settings_commerce_payment_method_info_alter(&$payment_methods) {
+  $payment_methods['commerce_stripe']['title'] = "Credit Card (Visa | Mastercard | American Express)";
+}
+
+function custom_settings_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+	if ($form_id == 'session_node_form') {
+		if ($form['uid']['#value'] == $user->uid || empty($form['uid'])) {
+		  $form['field_speakers']['und']['#default_value'] = $user->name . ' ('. $user->uid .')';
+		}
+		$form['field_speakers']['und']['#attributes']['readonly'] = 'readonly';
+		$form['field_conference']['und']['#attributes']['disabled'] = true;
+    if (!in_array('site administrator', $user->roles)) {
+	   drupal_add_css('.pane-node-form-publishing .pane-title { display:none; }', array('type' => 'inline'));
+			$form['options']['status']['#access'] = false;
+    }
+  }
+  if ($form_id == 'student_poster_node_form') {
+	  if ($form['uid']['#value'] == $user->uid || empty($form['uid'])) {
+	  	$form['field_students']['und']['#default_value'] = $user->name . ' ('. $user->uid .')';
+    }
+	  $form['field_students']['und']['#attributes']['readonly'] = 'readonly';
+	  $form['field_student_conference']['und']['#attributes']['disabled'] = true;
+	  if (!in_array('site administrator', $user->roles)) {
+		  drupal_add_css('.pane-node-form-publishing .pane-title { display:none; }', array('type' => 'inline'));
+		  $form['options']['status']['#access'] = false;
+	  }
+	}	
+  if ($form_id == 'panopoly_sponsor_node_form') { 
+	  if (!in_array('site administrator', $user->roles)) {
+		  drupal_add_css('.pane-node-form-publishing .pane-title { display:none; }', array('type' => 'inline'));
+		  $form['options']['status']['#access'] = false;
+	  }
+	}
+}
+
+/**
+ * Redirecting to login page if anonymous user tries to submit session
+ */
+function custom_settings_init(){
+  global $user;
+  if ($user->uid == 0  && $_GET['q'] == 'node/add/session' ) {
+	  drupal_set_message("You need a registered user and be logged in to submit this.");
+    drupal_goto('user/login');
+  }
+}
+
+
+/**
+ * hook_block_info()
+ */
+function custom_settings_block_info() {
+  $blocks['conference_news_info'] = array(
+    'info' => t('Conference News & Info'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/**
+ * hook_block_view()
+ */
+function custom_settings_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'conference_news_info':
+      $block['subject'] = '';
+      $block['content'] = custom_settings_news();
+      break;
+  }
+  return $block;
+}
+
+function custom_settings_news() {
+	if (is_numeric(arg(1))) {
+	  $nid = arg(1);
+		$node = node_load($nid);
+		$tid = 0;
+		if ($node->type == 'news' || $node->type == 'page') {
+		  $term_id = field_get_items('node', $node, 'field_conference_term');
+		  $tid = $term_id[0]['tid'];
+		}
+		else if ($node->type == 'panopoly_event') {
+			$term_id = field_get_items('node', $node, 'field_event_conference');
+		  $tid = $term_id[0]['tid'];
+		}
+		else {
+		  $term_id = field_get_items('node', $node, 'field_conference');
+		  $tid = $term_id[0]['tid'];	
+		}
+		
+		if ($tid) {
+				$result = db_query("SELECT node.nid AS nid, node.title AS node_title FROM {node} node 
+				INNER JOIN {taxonomy_index} taxonomy_index ON node.nid = taxonomy_index.nid
+			WHERE taxonomy_index.tid = :tid AND node.status = '1' AND node.type IN  ('award', 'panopoly_page', 'panopoly_event', 'news', 'page', 'publication', 'webform') 
+				ORDER BY node.created DESC
+				LIMIT 10 OFFSET 0", array(':tid' => $tid));
+				return theme_render_template(drupal_get_path('module', 'custom_settings') . '/templates/conference-news.tpl.php', array('result' => $result));	
+		}	
+		else {
+			return '';
+		}
+	}
+	else {
+		return '';
+	}
+}
+function custom_settings_menu_alter(&$items) {
+	$items['admin/commerce']['access arguments'] = array('configure store');	
+}

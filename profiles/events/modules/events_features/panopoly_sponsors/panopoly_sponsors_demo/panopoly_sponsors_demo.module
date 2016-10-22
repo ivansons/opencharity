@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file
+ * Code for the Panopoly Sponsor Demo feature.
+ */
+
+include_once 'panopoly_sponsors_demo.features.inc';
+
+
+/**
+ * Implements hook_migrate_api().
+ */
+function panopoly_sponsors_demo_migrate_api() {
+  $api = array(
+    'api' => 2,
+    'migrations' => array(
+      'PanopolySponsorDemoNode' => array('class_name' => 'PanopolySponsorDemoNode'),
+    ),
+  );
+  return $api;
+}

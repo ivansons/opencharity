@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * panopoly_session_demo.install
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function panopoly_session_demo_enable() {
+  _panopoly_core_import_demo_content(array('PanopolySessionDemoTimeslot','PanopolySessionDemoRoom','PanopolySessionDemoSession'));
+}
+
+/**
+ * Implements hook_disable().
+ */
+function panopoly_session_demo_disable() {
+  _panopoly_core_rollback_demo_content(array('PanopolySessionDemoTimeslot','PanopolySessionDemoRoom','PanopolySessionDemoSession'));
+}

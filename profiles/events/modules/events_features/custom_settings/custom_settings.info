@@ -1,0 +1,12 @@
+name = Custom Setings
+description = Some custom settings for the website
+package = Custom
+core = 7.x
+version = "7.x-1.0"
+project = "custom_settings"
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

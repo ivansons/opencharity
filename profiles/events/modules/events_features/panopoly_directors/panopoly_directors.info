@@ -1,0 +1,43 @@
+name = Panopoly Directors
+description = Board of Directors Feature
+core = 7.x
+package = Panopoly Apps
+php = 5.2.4
+dependencies[] = ctools
+dependencies[] = features
+dependencies[] = image
+dependencies[] = link
+dependencies[] = page_manager
+dependencies[] = panelizer
+dependencies[] = strongarm
+dependencies[] = views
+features[ctools][] = page_manager:pages_default:1
+features[ctools][] = panelizer:panelizer:1
+features[ctools][] = strongarm:strongarm:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[field][] = node-panopoly_officer-body
+features[field][] = node-panopoly_officer-field_headshot
+features[field][] = node-panopoly_officer-field_website
+features[node][] = panopoly_officer
+features[page_manager_pages][] = panopoly_directors
+features[panelizer_defaults][] = node:panopoly_officer:default
+features[panelizer_defaults][] = node:panopoly_officer:default:default
+features[panelizer_defaults][] = node:panopoly_officer:default:featured
+features[panelizer_defaults][] = node:panopoly_officer:default:teaser
+features[variable][] = field_bundle_settings_node__panopoly_officer
+features[variable][] = menu_options_panopoly_officer
+features[variable][] = menu_parent_panopoly_officer
+features[variable][] = node_options_panopoly_officer
+features[variable][] = node_preview_panopoly_officer
+features[variable][] = node_submitted_panopoly_officer
+features[variable][] = panelizer_defaults_node_panopoly_officer
+features[views_view][] = panopoly_board_of_directors
+features[views_view][] = panopoly_directors_admin_view
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

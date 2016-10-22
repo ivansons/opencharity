@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * panopoly_sponsors_demo.install
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function panopoly_sponsors_demo_enable() {
+  _panopoly_core_import_demo_content(array('PanopolySponsorDemoNode'));
+}
+
+/**
+ * Implements hook_disable().
+ */
+function panopoly_sponsors_demo_disable() {
+  _panopoly_core_rollback_demo_content(array('PanopolySponsorDemoNode'));
+}

@@ -1,0 +1,22 @@
+name = Event User
+description = Additional User Fields for General Public or Private User Info
+core = 7.x
+package = Events
+dependencies[] = features
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = field_event_co_org
+features[field_base][] = field_event_first_name
+features[field_base][] = field_event_job_title
+features[field_base][] = field_event_last_name
+features[field_instance][] = user-user-field_event_co_org
+features[field_instance][] = user-user-field_event_first_name
+features[field_instance][] = user-user-field_event_job_title
+features[field_instance][] = user-user-field_event_last_name
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

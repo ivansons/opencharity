@@ -1,0 +1,15 @@
+name = Panopoly Directors Demo
+core = 7.x
+package = Panopoly Apps
+version = 7.x-1.0
+project = panopoly_directors_demo
+dependencies[] = defaultcontent
+features[content][] = panopoly-directors-demo-0
+features[features_api][] = api:1
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

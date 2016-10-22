@@ -1,0 +1,18 @@
+name = Panopoly Session Demo
+core = 7.x
+package = Panopoly Apps
+version = 7.x-1.0
+project = panopoly_session_demo
+dependencies[] = migrate
+dependencies[] = panopoly_session
+features[features_api][] = api:2
+files[] = import/panopoly_session_demo.timeslot.inc
+files[] = import/panopoly_session_demo.room.inc
+files[] = import/panopoly_session_demo.session.inc
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * panopoly_paid_event_demo.install
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function panopoly_paid_event_demo_enable() {
+  _panopoly_core_import_demo_content(array('PanopolyPaidEventDemoNode'));
+  // Question: Do we need to import sku names for commerce products
+}
+
+/**
+ * Implements hook_disable().
+ */
+function panopoly_paid_event_demo_disable() {
+  _panopoly_core_rollback_demo_content(array('PanopolyPaidEventDemoNode'));
+}

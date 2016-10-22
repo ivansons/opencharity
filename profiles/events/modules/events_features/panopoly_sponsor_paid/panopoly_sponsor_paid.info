@@ -1,0 +1,46 @@
+name = Panopoly Sponsor Paid
+core = 7.x
+package = Panopoly Apps
+php = 5.2.4
+version = 7.x-1.0
+;project = panopoly_sponsor_paid
+dependencies[] = commerce_cart
+dependencies[] = commerce_features
+dependencies[] = commerce_price
+dependencies[] = commerce_product_reference
+dependencies[] = commerce_product_ui
+dependencies[] = ctools
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = field_sql_storage
+dependencies[] = inline_entity_form
+dependencies[] = list
+dependencies[] = node
+dependencies[] = options
+dependencies[] = strongarm
+dependencies[] = text
+dependencies[] = views
+features[commerce_product_type][] = paid_sponsorship
+features[ctools][] = strongarm:strongarm:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[field][] = commerce_product-paid_sponsorship-commerce_price
+features[field][] = commerce_product-paid_sponsorship-field_sponsorship_level
+; features[field][] = node-paid_sponsorship_product-body
+; features[field][] = node-paid_sponsorship_product-field_product_paid_sponsorship
+features[field][] = node-panopoly_sponsor-field_order_reference
+; features[node][] = paid_sponsorship_product
+features[variable][] = field_bundle_settings_node__paid_sponsorship_product
+features[variable][] = menu_options_paid_sponsorship_product
+features[variable][] = menu_parent_paid_sponsorship_product
+features[variable][] = node_options_paid_sponsorship_product
+features[variable][] = node_preview_paid_sponsorship_product
+features[variable][] = node_submitted_paid_sponsorship_product
+features[views_view][] = panopoly_sponsors_management_with_order_reference_
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

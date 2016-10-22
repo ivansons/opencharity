@@ -1,0 +1,22 @@
+<?php
+/**
+ * @file
+ * Code for the Panopoly Event Demo feature.
+ */
+
+include_once 'panopoly_paid_event_demo.features.inc';
+
+
+/**
+ * Implements hook_migrate_api().
+ */
+function panopoly_paid_event_demo_migrate_api() {
+  $api = array(
+    'api' => 2,
+    'migrations' => array(
+      'PanopolyPaidEventDemoNode' => array('class_name' => 'PanopolyPaidEventDemoNode'),
+      'PanopolyPaidEventDemoProduct' => array('class_name' => 'PanopolyPaidEventDemoProduct'),
+    ),
+  );
+  return $api;
+}

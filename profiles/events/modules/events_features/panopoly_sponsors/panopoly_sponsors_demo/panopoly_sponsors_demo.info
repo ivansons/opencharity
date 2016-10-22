@@ -1,0 +1,16 @@
+name = Panopoly Sponsor Demo
+core = 7.x
+package = Panopoly Apps
+version = 7.x-1.0
+project = panopoly_sponsor_demo
+dependencies[] = migrate
+dependencies[] = panopoly_sponsors
+features[features_api][] = api:2
+files[] = import/panopoly_sponsors_demo.node.inc
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

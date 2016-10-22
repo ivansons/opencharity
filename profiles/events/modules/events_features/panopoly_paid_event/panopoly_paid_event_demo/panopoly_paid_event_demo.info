@@ -1,0 +1,22 @@
+name = Panopoly Paid Event Demo
+core = 7.x
+package = Panopoly Apps
+version = 7.x-1.0
+project = panopoly_paid_event_demo
+dependencies[] = ctools
+dependencies[] = migrate
+dependencies[] = page_manager
+dependencies[] = panopoly_paid_event
+dependencies[] = views
+dependencies[] = views_content
+features[ctools][] = page_manager:pages_default:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[page_manager_pages][] = paid_event_homepage_demo
+files[] = import/panopoly_paid_event_demo.node.inc
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

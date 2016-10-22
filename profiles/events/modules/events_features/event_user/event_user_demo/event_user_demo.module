@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file
+ * Code for the Event User Demo feature.
+ */
+
+include_once 'event_user_demo.features.inc';
+
+
+/**
+ * Implements hook_migrate_api().
+ */
+function event_user_demo_migrate_api() {
+  $api = array(
+    'api' => 2,
+    'migrations' => array(
+      'EventUserDemo' => array('class_name' => 'EventUserDemo'),
+    ),
+  );
+  return $api;
+}

@@ -1,0 +1,42 @@
+name = Panopoly Paid Events
+description = Provides paid events options
+core = 7.x
+package = Panopoly Apps
+php = 5.2.4
+project = panopoly_paid_event
+dependencies[] = commerce
+dependencies[] = commerce_cart
+dependencies[] = commerce_features
+dependencies[] = commerce_product_ui
+dependencies[] = commerce_registration
+dependencies[] = conditional_fields
+dependencies[] = field_group
+dependencies[] = inline_entity_form
+dependencies[] = list
+dependencies[] = panopoly_event
+dependencies[] = registration
+features[commerce_product_type][] = panopoly_paid_event
+features[conditional_fields][] = node:panopoly_event
+features[ctools][] = field_group:field_group:1
+features[features_api][] = api:1
+features[field][] = commerce_product-panopoly_paid_event-commerce_price
+features[field][] = commerce_product-panopoly_paid_event-field_registration
+features[field][] = node-panopoly_event-field_paid_event
+features[field][] = node-panopoly_event-field_product_event
+features[field][] = registration-paid_event-field_register_first_name
+features[field][] = registration-paid_event-field_register_last_name
+features[registration_type][] = paid_event
+
+; Information added by drupal.org packaging script on 2013-10-01
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "panopoly_paid_event"
+datestamp = "1380622210"
+
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+

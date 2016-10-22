@@ -1,0 +1,177 @@
+<?php
+/**
+ * @file
+ * Code for the Panopoly Session feature.
+ */
+
+include_once('panopoly_session.features.inc');
+
+/**
+ * Implements hook_form_alter().
+ */
+function panopoly_session_form_alter(&$form, &$form_state, $form_id) {
+  // Prepopulate the current user into the Speakers field
+  // on new session creation.
+
+  if ($form_id == 'session_node_form') {
+    if (isset($form['field_speakers'])) {
+      // Form tweaks for the Speakers field:
+      $form['field_speakers'][LANGUAGE_NONE]['add_more']['#value'] = t('Add another speaker');
+      // Prepopulate the current user into the Speakers field
+      // on new session creation.
+      if (empty($form['#node']->nid)) {
+        global $user;
+        $form['field_speakers'][LANGUAGE_NONE][0]['uid']['#default_value'] = $user->uid;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function panopoly_session_theme($existing, $type, $theme, $path) {
+  return array(
+    'panopoly_session_schedule' => array(
+      'variables' => array('view' => NULL, 'options' => NULL, 'rows' => NULL, 'title' => NULL),
+      'template' => 'panopoly-session-schedule',
+    ),
+      'panopoly_session_schedule_view_grouping' => array (
+        'template' => 'panopoly-session-schedule-view-grouping'
+    ),
+    'panopoly_session_schedule_view_grid' => array (
+        'template' => 'panopoly-session-schedule-view-grid'
+    ),
+    'panopoly_session_schedule_view' => array (
+        'template' => 'panopoly-session-schedule-view'
+    )
+  );
+}
+
+/**
+ * Recursive ksort.
+ */
+function panopoly_session_ksort_recurse(&$array) {
+  ksort($array);
+  foreach (array_keys($array) as $key) {
+    if (is_array($array[$key])) {
+      panopoly_session_ksort_recurse($array[$key]);
+      ksort($array[$key]);
+    }
+    else {
+      return;
+    }
+  }
+}
+
+function panopoly_session_preprocess_views_view_grouping(&$vars) {
+  $view = $vars['view'];
+  if ($view->name == 'panopoly_schedule') {
+    $vars['theme_hook_suggestions'][] = 'panopoly_session_schedule_view_grouping';
+    $date_field_name = $view->style_plugin->options['grouping'][0]['field'];
+    // we need to get rendered date. It is equal for all rows
+    $rooms = _panopoly_session_get_rendered_rooms_in_view($view);
+    $vars['rooms'] = $rooms;
+    $first_element = reset($vars['rows']);
+    $key = key($first_element['rows']);
+    $vars['rendered_date'] = $view->style_plugin->get_field($key, $date_field_name);
+    
+    $vars['is_big_session'] = TRUE;
+    foreach ($rooms as $room) {
+      if (isset($vars['rows'][$room])) {
+        $vars['is_big_session'] = FALSE;
+        break;
+      }
+    }
+
+    // date at the table caption
+    $date_field_value = $view->style_plugin->get_field_value($key, $date_field_name);
+    $current_date = date_format_date(new DateObject(date_parse($date_field_value[0]['value'])), 'custom', 'F j, Y');
+    if (!isset($view->session_prev_date))
+      $vars['is_first_row'] = TRUE;
+    else
+      $vars['is_first_row'] = FALSE;
+    if (!isset($view->session_prev_date) || $view->session_prev_date != $current_date) {
+      $view->session_prev_date = $current_date;
+      $vars['show_date_row'] = TRUE;
+      $vars['current_date'] = $current_date;
+    }
+    else {
+      $vars['show_date_row'] = FALSE;
+      $vars['current_date'] = $current_date;
+    }
+
+    $sessions = array();
+    $rendered_rows = array();
+    if ($vars['is_big_session']) {
+      $room = key($vars['rows']);
+      $indexes = array_keys($vars['rows'][$room]['rows']);
+      $rendered_rows = array_merge($rendered_rows, $indexes);
+      foreach ($indexes as $index) {
+        $nid = $vars['rows'][$room]['rows'][$index]->nid;
+        $view->row_index = $index;
+        $sessions[$nid] = $view->style_plugin->row_plugin->render($view->result[$index]);
+      }
+      $vars['colspan'] = count($rooms);
+    }
+    else {
+      // group content
+      foreach ($rooms as $room) {
+        $sessions[$room] = array();
+        if (isset($vars['rows'][$room])) {
+          $indexes = array_keys($vars['rows'][$room]['rows']);
+          $rendered_rows = array_merge($rendered_rows, $indexes);
+          foreach ($indexes as $index) {
+            $nid = $vars['rows'][$room]['rows'][$index]->nid;
+            $view->row_index = $index;
+            $sessions[$room][$nid] = $view->style_plugin->row_plugin->render($view->result[$index]);
+          }
+        }
+      }
+    }
+    unset($view->row_index);
+    $vars['sessions'] = $sessions;
+
+    if (!isset($view->rendered_rows))
+      $view->rendered_rows = $rendered_rows;
+    else
+      $view->rendered_rows = array_merge($view->rendered_rows, $rendered_rows);
+    if (count($view->rendered_rows) == count($view->result))
+      $vars['is_last_row'] = TRUE;
+    else
+      $vars['is_last_row'] = FALSE;
+  }
+}
+
+function panopoly_session_preprocess_views_view_grid(&$vars) {
+  $view = $vars['view'];
+  if ($view->name == 'panopoly_schedule') {
+    $vars['theme_hook_suggestions'][] = 'panopoly_session_schedule_view_grid';
+  }
+}
+
+function panopoly_session_preprocess_views_view(&$vars) {
+  $view = $vars['view'];
+  if ($view->name == 'panopoly_schedule') {
+    $vars['theme_hook_suggestions'][] = 'panopoly_session_schedule_view';
+  }
+}
+
+/**
+ * Helper function
+ */
+function _panopoly_session_get_rendered_rooms_in_view($view) {
+  $room_field_name = $view->style_plugin->options['grouping'][1]['field'];
+  $rendered_rooms = array();
+  foreach ($view->result as $key => $value) {
+    
+    // to be sure we have same room order we need to process it like this
+    $is_big_room = $view->style_plugin->get_field_value($key, 'field_is_a_room_for_big_sessions');
+    if ($is_big_room[0]['value'] == 0) {
+      $room = $view->style_plugin->get_field($key, $room_field_name);
+      if (array_search($room, $rendered_rooms) === FALSE)
+        $rendered_rooms[$key] = $room;
+    }
+  }
+  return $rendered_rooms;
+}

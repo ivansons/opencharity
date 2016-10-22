@@ -1,0 +1,12 @@
+name = Events Admin
+description = Administrative dashboard and related editing interfaces.
+core = 7.x
+package = Events
+project = events_admin
+
+; Information added by Drupal.org packaging script on 2014-06-11
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "events_features"
+datestamp = "1402501132"
+
