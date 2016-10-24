@@ -20,14 +20,16 @@
 	margin: 0 20px;
 }
 	width: 100%;
+
 	li{
 		border: none !important;
-    width: 21%!important;
 		margin: 10px 0;
+		background: transparent;
 	}
 	.jcarousel-item{
 		overflow: visible !important;
 		height: auto !important; //works
+		background: transparent;
 	}
 	.jcarousel-container-horizontal{
 		padding: 0px;
@@ -48,4 +50,39 @@
 		 .jcarousel-clip;
 
 	}
+}
+#block-views-blog-block{
+
+	li{
+		border: none !important;
+		width: 21%!important;
+	}
+}
+#block-views-members-block{
+	.jcarousel-item{
+		height: 100px !important; //works
+	}
+}
+@media (max-width: 767px) {
+	.jcarousel-skin-default{
+		li{
+			border: none !important;
+			width: 100%!important;
+			margin: 10px 0;
+		}
+		.jcarousel-navigation{
+			display: none;
+		}
+		.jcarousel-next {
+			display: none;
+
+		}
+		.jcarousel-prev {
+			display: none;
+		}
+        .jcarousel-item {
+            display:block;
+            padding-bottom:10px;
+        }
+    }
 }
