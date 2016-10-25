@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * Allows support of a new view handler.
+ */
+
+
+/**
+ * Implements hook_theme().
+ */
+function jssor_theme() {
+  return array(
+    'jssor' => array(
+      'variables' => array(
+        'view' => NULL,
+        'rows' => NULL,
+      ),
+      'file' => 'jssor.theme.inc',
+    ),
+  );
+}
+
+function jssor_views_api() {
+  return array( 'api' => 3);
+}
+
+
+/**
+ * Implements hook_library().
+ */
+function jssor_library() {
+  // Get the external JSSOR Slider library path.
+  $slider_lib_src = libraries_get_path('jssor-slider', true);
+  // Get this module's base location.
+  $base_path = drupal_get_path('module', 'jssor');
+  // Add the JSSOR files as Drupal library.
+  return array(
+    'jquery.jssor.slider' => array(
+      'title' => 'JSSOR Slider',
+      'website' => 'http://www.jssor.com',
+      'version' => '17.0',
+      'js' => array(
+        $base_path . '/js/jssor_view.js' => array('weight' => 999, 'scope' => 'footer','group' => 500),
+        $slider_lib_src . '/js/jssor.slider.min.js' => array(),
+      ),
+      'css' => array(
+        $base_path . '/css/jssor-skin.css' => array(
+          'type' => 'file',
+          'media' => 'screen',
+        ),
+      ),
+      'dependencies' => array(
+        // Require jQuery UI core by System module.
+        array('system', 'jquery'),
+      ),
+    ),
+  );
+}
+
+function jssor_libraries_info() {
+  return array(
+    'jssor-slider' => array(
+      'name' => 'JSSOR Slider',
+      'vendor url' => 'http://www.jssor.com',
+      'download url' => 'https://github.com/jssor/slider/archive/master.zip',
+      // Optional: If, after extraction, the actual library files are contained in
+      // 'sites/all/libraries/example/lib', specify the relative path here.
+      'path' => 'js',
+      // Specify arguments for the version callback. By default,
+      'version arguments' => array(
+        'file' => 'js/jssor.js',
+        'pattern' => '@[Js]ssor\s+([0-9a-zA-Z\.-]+)@',
+        'lines' => 5,
+        'cols' => 50,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_preprocess_jssor().
+ */
+function jssor_preprocess_jssor(&$variables) {
+  // Do some D7 fixing from the D8 theme.
+  foreach($variables['rows'] as $i => $row) {
+    $variables['rows'][$i]['attributes'] = $variables['rows'][$i]['attributes']->attributes;
+  }
+
+  $variables['view']->element['#attached']['library'] = array(array('jssor', 'jquery.jssor.slider'));
+
+  drupal_add_js(array('jssor' => $variables['view']->element['#attached']['drupalSettings']), array('type' => 'setting', 'weight' => 0));
+  drupal_add_js('var drupalSettings = Drupal.settings.jssor;',
+    array('type' => 'inline', 'scope' => 'footer', 'weight' => 1)
+  );
+
+  drupal_add_library('jssor', 'jquery.jssor.slider');
+}
+
+

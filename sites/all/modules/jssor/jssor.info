@@ -1,0 +1,19 @@
+name = "Jssor Slider"
+description = 'Jssor Slider'
+dependencies[] = 'libraries'
+package = Slider
+core = 7.x
+
+files[] = jssor_views_plugins_style.inc
+files[] = src/shims/Attribute.inc
+files[] = src/shims/FormStateInterface.inc
+files[] = src/shims/ViewsStylePluginBase.inc
+files[] = src/JssorViewsStylePlugin.inc
+files[] = src/Plugin/views/style/Jssor.php
+
+; Information added by Drupal.org packaging script on 2015-11-02
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "jssor"
+datestamp = "1446451747"
+

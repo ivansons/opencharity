@@ -13,6 +13,26 @@
 	.jcarousel-next-horizontal:hover {
     background-position: -17px -29px;
 }
+.jcarousel-navigation{
+	width: 53px;
+margin: auto;
+	li{
+		margin: auto;
+		a{
+	width: 8px;
+height: 8px;
+border-radius: 19px;
+display: block !important;
+background: #979eb1;
+&:active {
+background-color: @accent !important;}
+margin: 5px;
+float: left;
+text-indent: -99999px;
+
+}
+}
+}
 .jcarousel-prev-horizontal:hover {
 	background-position: -17px -29px;
 }
@@ -41,7 +61,7 @@
 		width: 100% !important;
 	}
 	.jcarousel-list-horizontal{
-		.jcarousel-clip;
+
 	}
 	.jcarousel-container{
 		.jcarousel-clip;
@@ -61,6 +81,9 @@
 #block-views-members-block{
 	.jcarousel-item{
 		height: 100px !important; //works
+	}
+	.jcarousel-next{
+		display: none;
 	}
 }
 @media (max-width: 767px) {

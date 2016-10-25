@@ -136,9 +136,15 @@ hr.star-primary:after {
 	border: 1px solid @accent;
 	padding-top: 12px;
 	padding-bottom: 12px;
+	&:hover {
+  background: darken(@accent, 10%);}
+
 		a{
 			color: @accent;
 			text-transform: uppercase;
+			text-decoration: none;
+			&:hover {
+		  color:#fff;}
 		}
 
 }

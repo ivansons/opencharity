@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Implements hook_requirements().
+ */
+function jssor_requirements($phase) {
+  if($phase == 'runtime') {
+    // Detect if the external JSSOR slider library is installed.
+    $requirements = array();
+    $info = libraries_info('jssor-slider');
+    $version = null;
+
+    if($info !== false) {
+      $lib_path = libraries_get_path('jssor-slider', TRUE);
+      if(!empty($lib_path)) {
+        $info['library path'] = $lib_path;
+        $version = libraries_get_version($info, $info['version arguments']);
+      }
+    }
+
+    $requirements['jssor'] = array(
+      'title' => 'JSSOR Library',
+      'severity' => ($version ? REQUIREMENT_OK : REQUIREMENT_ERROR),
+      'description' => 'The JSSOR Slider library. Download from http://wwww.jssor.com',
+      'value' => $version,
+    );
+
+    return $requirements;
+  }
+}
+
